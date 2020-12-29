@@ -190,6 +190,10 @@ K <- taxi.ppp %>%
   plot()
 
 ## Global Spatial Autocorrelation analysis
+#First calculate the centroids of all Wards in London
+coordsW <- LondonBoroughs %>%
+  st_centroid()%>%
+  st_geometry()
 # Generate a spatial weights matrix using nearest k-nearest neighbours case
 knn_boros <-coordsW %>%
   knearneigh(., k=4) #create a neighbours list of nearest k-nearest neighbours (k=4)
