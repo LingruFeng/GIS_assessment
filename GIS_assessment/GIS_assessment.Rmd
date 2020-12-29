@@ -361,8 +361,8 @@ Plot a map of the local Getis-Ord’s G z-score
 
 ```{r}
 # Set the breaks and color bar manually
-breaks1<-c(-1000,-2.58,-1.96,-1.65,1.65,1.96,2.58,1000)
-MoranColours<- rev(brewer.pal(8, "RdGy"))
+breaks1<-c(-3.00,-2.58,-1.96,-1.65,1.65,1.96,2.58,3.00)
+MoranColours<- rev(brewer.pal(8, "RdBu"))
 # Plot the local Getis-Ord’s G test z-score map
 tmap_mode("plot")
 zscore_taxi <- tm_shape(LondonBoroughs_test) +
@@ -371,7 +371,7 @@ zscore_taxi <- tm_shape(LondonBoroughs_test) +
               breaks=breaks1,
               palette=MoranColours,
               midpoint=NA,
-              title="Z-score")+
+              title="Z-score (Gi*)")+
   tm_layout(frame=FALSE,
             legend.position = c("right","bottom"), 
             legend.text.size=1, 

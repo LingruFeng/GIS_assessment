@@ -85,13 +85,13 @@ tm1 <- tm_shape(LondonBoroughs)+
   tm_polygons(col="gray",alpha = 0.2)+
   tm_layout(frame=FALSE)+
   tm_shape(public)+
-  tm_symbols(col = "red", scale = .6)+
+  tm_symbols(col = "red", scale = .4)+
   tm_credits("(a) Public Use", position=c(0.25,0.8), size=2)
 tm2 <- tm_shape(LondonBoroughs)+ 
   tm_polygons(col="gray",alpha = 0.2)+
   tm_layout(frame=FALSE)+
   tm_shape(taxi)+
-  tm_symbols(col = "blue", scale = .6)+
+  tm_symbols(col = "blue", scale = .4)+
   tm_credits("(b) Taxi", position=c(0.35,0.8), size=2)+
   tm_scale_bar(text.size=0.85,position=c(0.57,0.14))+
   tm_compass(north=0,position=c(0.8,0.25),size=3)+
@@ -286,3 +286,34 @@ zscore_taxi
 
 
 
+## Local Getis-Ord’s G test
+# Calculate the Local Getis-Ord’s G z-score for taxi charging point density data
+G_local_taxi <- LondonBoroughs %>%
+  pull(taxi_density) %>%
+  as.vector()%>%
+  localG(., boro_knn)
+# Covert into a dataframe and append into borough data frame
+G_local_taxi_df <- data.frame(matrix(unlist(G_local_taxi), nrow=33, byrow=T))
+LondonBoroughs_test <- LondonBoroughs %>%
+  mutate(z_score = as.numeric(G_local_taxi_df$matrix.unlist.G_local_taxi...nrow...33..byrow...T.))
+# Plot a map of the local Getis-Ord’s G z-score 
+# Set the breaks and color bar manually
+breaks1<-c(-3.00,-2.58,-1.96,-1.65,1.65,1.96,2.58,3.00)
+MoranColours<- rev(brewer.pal(8, "RdBu"))
+# local Getis-Ord’s G test z-score map
+tmap_mode("plot")
+zscore_taxi <- tm_shape(LondonBoroughs_test) +
+  tm_polygons("z_score",
+              style="fixed",
+              breaks=breaks1,
+              palette=MoranColours,
+              midpoint=NA,
+              title="Z-score (Gi*)")+
+  tm_layout(frame=FALSE,
+            legend.position = c("right","bottom"), 
+            legend.text.size=1, 
+            legend.title.size = 1.5)+
+  tm_scale_bar(text.size=0.85,position=c(0,0.03))+
+  tm_compass(north=0,position=c(0.03,0.12),size=3.5,text.size = 1)+
+  tm_credits("(c) Greater London Authority",position=c(0,0),size = 1)
+zscore_taxi
